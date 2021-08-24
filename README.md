@@ -114,6 +114,40 @@ docker run -d --name koel \
     hyzual/koel
 ```
 
+docker-compose file:
+```
+version: '3'
+
+services:
+  koel:
+    container_name: koel
+    image: hyzual/koel
+    depends_on:
+      - koel-db
+    ports:
+      - 480:80
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: koel-db
+      DB_USERNAME: koel
+      DB_PASSWORD: <YOUR KOEL DATABASE PASSWORD>
+      DB_DATABASE: koel
+    volumes:
+      - ./music:/music #your music library goes here
+      - ./covers:/var/www/html/public/img/covers
+      - ./koel_search_index:/var/www/html/storage/search-indexes
+
+  koel-db:
+    container_name: koel-db
+    image: postgres:13
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - POSTGRES_DB=koel
+      - POSTGRES_USER=koel
+      - POSTGRES_PASSWORD=<YOUR KOEL DATABASE PASSWORD>
+```
+
 The same applies for the first run. See the [First run section](#first-run).
 
 ### How to bind-mount the `.env` file
@@ -161,6 +195,10 @@ docker run -d --name koel \
     --env-file .koel.env \
     hyzual/koel
 ```
+
+Default username and password:
+Username: admin@koel.dev
+Password: KoelIsCool
 
 ### Scan media folders
 
